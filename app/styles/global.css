@@ -1,0 +1,30 @@
+:root {
+  --border-grey: #808080;
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  /* background: tan; */
+}
+
+body {
+  font-family: sans-serif;
+}
+
+main {
+  padding: 24px;
+}
+
+.top-navigation {
+  display: flex;
+  gap: 8px;
+  padding: 16px 24px;
+}
+

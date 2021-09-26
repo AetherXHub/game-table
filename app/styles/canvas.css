@@ -1,0 +1,29 @@
+.canvas-container {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  padding: 0;
+  background: white;
+}
+
+.top-navigation {
+  position: relative;
+  z-index: 1;
+}
+
+.canvas-controls {
+  position: absolute;
+  z-index: 2;
+  background: lavender;
+}
+
+.canvas-canvas {
+  /* position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1; */
+  background: white;
+  border: 2px solid var(--border-grey);
+}
