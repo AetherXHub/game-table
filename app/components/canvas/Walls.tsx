@@ -1,19 +1,19 @@
-import * as React from 'react';
-import { useCanvas } from './Canvas';
-import { ID } from '../../util';
+import * as React from "react";
+import { useCanvas } from "./Canvas";
+import { ID } from "../../util";
 
 type WallsProps = {
   walls: Walls;
   wallThickness: number;
-}
+};
 export const Walls = ({ walls, wallThickness }: WallsProps) => {
   const idRef = React.useRef(ID());
   const { registerNode, removeNode, gridSize } = useCanvas();
 
   React.useEffect(() => {
     let draw: DrawFn = (ctx) => {
-      drawWalls(ctx, walls, gridSize, wallThickness)
-    }
+      drawWalls(ctx, walls, gridSize, wallThickness);
+    };
     if (registerNode) {
       registerNode(idRef.current, draw);
     }
@@ -25,48 +25,63 @@ export const Walls = ({ walls, wallThickness }: WallsProps) => {
 };
 
 function drawWall(ctx: CanvasRenderingContext2D, wall: Wall, gridSize: number) {
-  let [ [startX, startY], [endX, endY] ] = wall;
-  let { x, y, width, height } = calculateRect(wall, gridSize)
+  let [[startX, startY], [endX, endY]] = wall;
+  let { x, y, width, height } = calculateRect(wall, gridSize);
 
   ctx.fillStyle = "#000";
   ctx.fillRect(x, y, width, height); // black floor
 }
 
-function drawFloor(ctx: CanvasRenderingContext2D, wall: Wall, gridSize: number, wallThickness: number) {
+function drawFloor(
+  ctx: CanvasRenderingContext2D,
+  wall: Wall,
+  gridSize: number,
+  wallThickness: number
+) {
   let adjustForWall = (n: number) => n - 2 * wallThickness;
-  let direction = getDirection(wall[0], wall[1])
-  let { x, y, width, height } = calculateRect(wall, gridSize)
+  let direction = getDirection(wall[0], wall[1]);
+  let { x, y, width, height } = calculateRect(wall, gridSize);
 
   if (direction === "left") {
-    x =  x - 2 * wallThickness;
-    width = width + 4 * wallThickness
+    x = x - 2 * wallThickness;
+    width = width + 4 * wallThickness;
   }
 
   if (direction === "up") {
     y = y - 2 * wallThickness;
     height = height + 4 * wallThickness;
   }
-  
+
   ctx.fillStyle = "tomato";
-  ctx.fillRect(x + wallThickness, y + wallThickness, adjustForWall(width), adjustForWall(height)); // black floor
+  ctx.fillRect(
+    x + wallThickness,
+    y + wallThickness,
+    adjustForWall(width),
+    adjustForWall(height)
+  ); // black floor
 }
 
-function drawWalls(ctx: CanvasRenderingContext2D, walls: Walls, gridSize: number, wallThickness: number) {
+function drawWalls(
+  ctx: CanvasRenderingContext2D,
+  walls: Walls,
+  gridSize: number,
+  wallThickness: number
+) {
   ctx.beginPath();
-  
+
   // pass 1 draw the "walls rects"
   for (let wall of walls) {
-    drawWall(ctx, wall, gridSize)
+    drawWall(ctx, wall, gridSize);
   }
 
-  ctx.clip()
+  ctx.clip();
   // pass 2 draw the "floor rects on top"
   for (let wall of walls) {
-    drawFloor(ctx, wall, gridSize, wallThickness)
+    drawFloor(ctx, wall, gridSize, wallThickness);
   }
 }
 
-type Direction = "left" | "right" | "up" | "down"
+type Direction = "left" | "right" | "up" | "down";
 
 function getDirection(start: Point, end: Point): Direction {
   let [startX, startY] = start;
@@ -80,16 +95,16 @@ function getDirection(start: Point, end: Point): Direction {
     case endX < startX:
       return "left";
     case endY < startY:
-      return "up"
+      return "up";
   }
 
-  return 'left'
+  return "left";
 }
 
 function calculateRect(wall: Wall, gridSize: number) {
   let [start, end] = wall;
   let [startX, startY] = start;
-  let [endX, endY] = end; 
+  let [endX, endY] = end;
   let width, height;
   let direction = getDirection(start, end);
 
@@ -100,17 +115,17 @@ function calculateRect(wall: Wall, gridSize: number) {
       width = startX != endX ? endX : gridSize;
       height = startY != endY ? endY : gridSize;
 
-      return {x: startX, y: startY, width, height}
+      return { x: startX, y: startY, width, height };
     }
     case "up":
     case "left": {
       // left and down
       width = startX != endX ? getDiff(startX, endX) - gridSize : gridSize;
       height = startY != endY ? getDiff(startY, endY) - gridSize : gridSize;
-      let x = direction === "left" ? startX + gridSize : startX
-      let y = direction === "up" ? startY + gridSize : startY
+      let x = direction === "left" ? startX + gridSize : startX;
+      let y = direction === "up" ? startY + gridSize : startY;
 
-      return {x, y, width, height}
+      return { x, y, width, height };
     }
   }
 }

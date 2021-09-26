@@ -1,5 +1,5 @@
-import { redirect } from '@remix-run/server-runtime';
-import * as React from 'react';
+import { redirect } from "@remix-run/server-runtime";
+import * as React from "react";
 
 const CanvasContext = React.createContext<CanvasContext>({
   registerNode: () => {},
@@ -7,12 +7,12 @@ const CanvasContext = React.createContext<CanvasContext>({
   gridSize: 30,
   canvas: null,
   cols: 0,
-  rows: 0
+  rows: 0,
 });
 
 type NodeRegistry = {
-  [id: string]: DrawFn
-}
+  [id: string]: DrawFn;
+};
 
 type CanvasProps = {
   width: number;
@@ -23,14 +23,17 @@ type CanvasProps = {
   id?: string;
   onMouseMove: (point: Point) => void;
   onMouseOut: () => void;
-}
+};
 
-export const Canvas = ({gridSize, onMouseMove, ...props}: CanvasProps) => {
-  const ref = React.useRef<HTMLCanvasElement>(null)
+export const Canvas = ({ gridSize, onMouseMove, ...props }: CanvasProps) => {
+  const ref = React.useRef<HTMLCanvasElement>(null);
   const [ctx, setCtx] = React.useState<CanvasRenderingContext2D>();
   const nodes = React.useRef<NodeRegistry>({});
 
-  const registerNode = (id: string, fn: (ctx: CanvasRenderingContext2D) => void ) => {
+  const registerNode = (
+    id: string,
+    fn: (ctx: CanvasRenderingContext2D) => void
+  ) => {
     nodes.current[id] = fn;
     drawFn();
   };
@@ -55,7 +58,7 @@ export const Canvas = ({gridSize, onMouseMove, ...props}: CanvasProps) => {
   React.useEffect(() => {
     const node = ref.current;
     if (node) {
-      const renderCtx = node.getContext('2d');
+      const renderCtx = node.getContext("2d");
 
       if (renderCtx && !ctx) {
         setCtx(renderCtx);
@@ -64,22 +67,24 @@ export const Canvas = ({gridSize, onMouseMove, ...props}: CanvasProps) => {
   }, [ctx, setCtx]);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    const {clientX, clientY} = e;
-    onMouseMove([clientX, clientY])
-  }
-  
+    const { clientX, clientY } = e;
+    onMouseMove([clientX, clientY]);
+  };
+
   return (
-    <CanvasContext.Provider value={{ 
-      registerNode,
-      removeNode,
-      gridSize: gridSize,
-      canvas: ref.current, 
-      cols: Number(ref?.current?.width) / gridSize | 0, 
-      rows: Number(ref?.current?.height) / gridSize | 0 
-    }}>
-      <canvas ref={ref} {...props} onMouseMove={handleMouseMove}/>
+    <CanvasContext.Provider
+      value={{
+        registerNode,
+        removeNode,
+        gridSize: gridSize,
+        canvas: ref.current,
+        cols: (Number(ref?.current?.width) / gridSize) | 0,
+        rows: (Number(ref?.current?.height) / gridSize) | 0,
+      }}
+    >
+      <canvas ref={ref} {...props} onMouseMove={handleMouseMove} />
     </CanvasContext.Provider>
   );
-}
+};
 
 export const useCanvas = () => React.useContext(CanvasContext);
